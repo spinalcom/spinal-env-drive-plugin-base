@@ -2,7 +2,7 @@
   "name": "spinal-env-drive-plugin-base",
   "version": "1.0.0",
   "description": "basic plugin in spinal-browser-drive",
-  "main": "spinaldrive-lib.js",
+  "main": "index.js",
   "dependencies": {
     "spinal-env-drive-core": "git+https://github.com/spinalcom/spinal-env-drive-core.git"
   },
