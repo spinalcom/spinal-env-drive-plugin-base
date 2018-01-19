@@ -119,11 +119,11 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
     let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
-
+    let templateCache = obj.scope.injector.get('$templateCache');
     mdDialog.show({
       ariaLabel: 'Edit',
       controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_Edit.DialogEditCtrl],
-      template: "SpinalDrive_App_Edit_EditTemplate.html",
+      template: templateCache.get("SpinalDrive_App_Edit_EditTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
       locals: {
