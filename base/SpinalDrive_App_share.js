@@ -126,68 +126,25 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
   };
 };
 
-SpinalDrive_App_share.shareTemplate = '<md-dialog aria-label="Sharing setting">' +
-  '  <md-dialog-content style="padding-left: 10px;padding-right: 10px;">' +
-  '        <h3>Sharing setting</h3>' +
-  '        <h5 style="margin-top: 30px;margin-bottom: 0px;">Invite people:</h5>' +
-  '        <md-chips ng-model="chip_users" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="true">' +
-  '        <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)"' +
-  '          md-item-text="item.name" placeholder="User(s) to share...">' +
-  '          <span md-highlight-text="searchText">{{item.id}} - {{item.name}}</span>' +
-  '        </md-autocomplete>' +
-  '        <md-chip-template>' +
-  '          <span>' +
-  '            <strong>{{$chip.name}}</strong>' +
-  '            <em>({{$chip.id}})</em>' +
-  '          </span>' +
-  '        </md-chip-template>' +
-  '     </md-chips>' +
-  '        <h5 style="margin-top: 30px;margin-bottom: 0px;">Who has access:</h5>' +
-  '      <md-table-container>' +
-  '        <table md-table>' +
-  '          <thead md-head>' +
-  '            <tr style="height: 25px;">' +
-  '              <th md-column>Id</th>' +
-  '              <th md-column style="width: 30%;">User</th>' +
-  '              <th md-column>Read</th>' +
-  '              <th md-column>Write</th>' +
-  '              <th md-column>Admin</th>' +
-  '            </tr>' +
-  '          </thead>' +
-  '          <tbody md-body>' +
-  '            <tr  md-select-id="name" ng-repeat="_user in selectedModelShared_to_user" file-obj="file">' +
-  '              <td md-cell>{{_user.id}}</td>' +
-  '              <td md-cell>{{_user.name}}</td>' +
-  '              <td md-cell>{{_user.rd}}</td>' +
-  '              <td md-cell>{{_user.wr}}</td>' +
-  '              <td md-cell>{{_user.ad}}</td>' +
-  '            </tr>' +
-  '          </tbody>' +
-  '        </table>' +
-  '      </md-table-container>' +
-  '        <h5 style="margin-top: 30px;margin-bottom: 0px;">Right access to give:</h5>' +
-  '    <md-input-container style="margin: 0;" class="md-block">' +
-  '        <md-switch class="md-primary" style="margin: 15px;" name="Read" ng-model="rightRead">' +
-  '          Read' +
-  '        </md-switch>' +
-  '        <md-switch class="md-primary" style="margin: 15px;" name="Write" ng-model="rightWrite">' +
-  '          Write' +
-  '        </md-switch>' +
-  '        <md-switch class="md-primary" style="margin: 15px;" name="Share" ng-model="rightShare">' +
-  '          Share' +
-  '        </md-switch>' +
-  '    </md-input-container>' +
-  ' <p class="p-error fadein" ng-repeat="error_msg in error_msgs">{{error_msg}}</p>' +
-  '  </md-dialog-content>' +
-  '  <md-dialog-actions>' +
-  '    <md-button ng-click="cancelDialog()" class="md-primary">' +
-  '      Cancel' +
-  '    </md-button>' +
-  '    <md-button ng-click="submitDialog()" class="md-primary">' +
-  '      Submit' +
-  '    </md-button>' +
-  '  </md-dialog-actions>' +
-  '</md-dialog>';
+angular.module('app.spinal-pannel')
+  .run(["$templateCache", "$http",
+    function ($templateCache, $http) {
+      let load_template = (uri, name) => {
+        $http.get(uri).then((response) => {
+          $templateCache.put(name, response.data);
+        }, (errorResponse) => {
+          console.log('Cannot load the file ' + uri);
+        });
+      };
+      let toload = [{
+        uri: '../templates/spinal-env-drive-plugin-base/Spinal_App_ShareTemplate.html',
+        name: 'Spinal_App_ShareTemplate.html'
+      }];
+      for (var i = 0; i < toload.length; i++) {
+        load_template(toload[i].uri, toload[i].name);
+      }
+    }
+  ]);
 
 /**
  * SpinalDrive_App_FileExplorer_share
@@ -211,13 +168,13 @@ class SpinalDrive_App_FileExplorer_share extends SpinalDrive_App_share {
    */
   action(obj) {
     console.log(obj);
-    // let spinalModelDictionary = angular.element(element).injector().get('spinalModelDictionary');
+    let templateCache = obj.scope.injector.get('$templateCache');
     let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
     mdDialog.show({
       controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
-      template: SpinalDrive_App_share.shareTemplate,
+      template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       targetEvent: obj.evt,
       clickOutsideToClose: true,
@@ -256,12 +213,13 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
    * @memberof SpinalDrive_App_FolderExplorer_share
    */
   action(obj) {
+    let templateCache = obj.scope.injector.get('$templateCache');
     let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
     mdDialog.show({
       controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
-      template: SpinalDrive_App_share.shareTemplate,
+      template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
       locals: {
@@ -296,12 +254,13 @@ class SpinalDrive_App_Inspector_share extends SpinalDrive_App_share {
    * @memberof SpinalDrive_App_Inspector_share
    */
   action(obj) {
+    let templateCache = obj.scope.injector.get('$templateCache');
     let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
     mdDialog.show({
       controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
-      template: SpinalDrive_App_share.shareTemplate,
+      template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
       locals: {

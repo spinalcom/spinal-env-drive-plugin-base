@@ -1,0 +1,62 @@
+<md-dialog aria-label="Sharing setting">
+  <md-dialog-content style="padding-left: 10px;padding-right: 10px;">
+    <h3>Sharing setting</h3>
+    <h5 style="margin-top: 30px;margin-bottom: 0px;">Invite people:</h5>
+    <md-chips ng-model="chip_users" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="true">
+      <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name"
+        placeholder="User(s) to share...">
+        <span md-highlight-text="searchText">{{item.id}} - {{item.name}}</span>
+      </md-autocomplete>
+      <md-chip-template>
+        <span>
+          <strong>{{$chip.name}}</strong>
+          <em>({{$chip.id}})</em>
+        </span>
+      </md-chip-template>
+    </md-chips>
+    <h5 style="margin-top: 30px;margin-bottom: 0px;">Who has access:</h5>
+    <md-table-container>
+      <table md-table>
+        <thead md-head>
+          <tr style="height: 25px;">
+            <th md-column>Id</th>
+            <th md-column style="width: 30%;">User</th>
+            <th md-column>Read</th>
+            <th md-column>Write</th>
+            <th md-column>Admin</th>
+          </tr>
+        </thead>
+        <tbody md-body>
+          <tr md-select-id="name" ng-repeat="_user in selectedModelShared_to_user" file-obj="file">
+            <td md-cell>{{_user.id}}</td>
+            <td md-cell>{{_user.name}}</td>
+            <td md-cell>{{_user.rd}}</td>
+            <td md-cell>{{_user.wr}}</td>
+            <td md-cell>{{_user.ad}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </md-table-container>
+    <h5 style="margin-top: 30px;margin-bottom: 0px;">Right access to give:</h5>
+    <md-input-container style="margin: 0;" class="md-block">
+      <md-switch class="md-primary" style="margin: 15px;" name="Read" ng-model="rightRead">
+        Read
+      </md-switch>
+      <md-switch class="md-primary" style="margin: 15px;" name="Write" ng-model="rightWrite">
+        Write
+      </md-switch>
+      <md-switch class="md-primary" style="margin: 15px;" name="Share" ng-model="rightShare">
+        Share
+      </md-switch>
+    </md-input-container>
+    <p class="p-error fadein" ng-repeat="error_msg in error_msgs">{{error_msg}}</p>
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="cancelDialog()" class="md-primary">
+      Cancel
+    </md-button>
+    <md-button ng-click="submitDialog()" class="md-primary">
+      Submit
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>;
