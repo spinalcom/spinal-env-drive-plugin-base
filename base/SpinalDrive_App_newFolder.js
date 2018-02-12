@@ -33,8 +33,12 @@ class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
     obj.original = {
       model: obj.model._server_id
     };
-    mdDialog.show(confirm).then(function (result) {
+    
+    mdDialog.show(confirm).then( (result)=> {
       spinalFileSystem.newFolder(null, obj, result);
+      let username = obj.scope.injector.get('authService').get_user().username;
+      this.log(obj.model[obj.model.length - 1], username, obj.item.description);
+
     }, function () {});
 
   }
@@ -66,19 +70,20 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let spinalFileSystem = obj.scope.injector.get('spinalFileSystem');
     console.log(obj);
+
     var confirm = mdDialog.prompt()
       .title('New Folder')
       .placeholder('Untitled folder')
-      .ariaLabel('New Folder')
+      .ariaLabel('New Folder')  
       .clickOutsideToClose(true)
       .initialValue('Untitled folder')
       .required(true)
       .ok('Create!')
       .cancel('Cancel');
-
     mdDialog.show(confirm).then(function (result) {
       spinalFileSystem.newFolder(obj.scope.all_dir, obj.node, result);
     }, function () {});
+    
   }
 }
 
