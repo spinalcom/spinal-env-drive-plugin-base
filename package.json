@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-drive-plugin-base",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "basic plugin in spinal-browser-drive",
   "main": "index.js",
   "dependencies": {
@@ -13,13 +13,5 @@
     "create_plugin_template": "create_plugin_template"
   },
   "author": "Laurent HA TAM DAN",
-  "license": "SEE LICENSE IN license.pdf",
-  "src": [
-    "spinaldrive_env_delete.js",
-    "spinaldrive_env_edit.js",
-    "spinaldrive_env_issim.js",
-    "spinaldrive_env_newFolder.js",
-    "spinaldrive_env_rename.js",
-    "spinaldrive_env_share.js"
-  ]
+  "license": "SEE LICENSE IN license.pdf"
 }
