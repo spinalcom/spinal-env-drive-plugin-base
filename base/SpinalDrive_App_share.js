@@ -126,7 +126,7 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
   };
 };
 
-angular.module('app.spinal-pannel')
+angular.module('app.spinal-panel')
   .run(["$templateCache", "$http",
     function ($templateCache, $http) {
       let load_template = (uri, name) => {

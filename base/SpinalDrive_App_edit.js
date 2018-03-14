@@ -41,7 +41,7 @@ SpinalDrive_App_Edit.DialogEditCtrl = function ($scope, $mdDialog, model_server_
   };
 };
 
-angular.module('app.spinal-pannel')
+angular.module('app.spinal-panel')
   .run(["$templateCache", "$http",
     function ($templateCache, $http) {
       let load_template = (uri, name) => {
