@@ -217,13 +217,33 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
     let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
     let mdDialog = obj.scope.injector.get('$mdDialog');
     let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
+    let spinalFileSystem = obj.scope.injector.get('spinalFileSystem');
+
+    let node = obj.node;
+    let n_par = spinalFileSystem.folderExplorer_dir[node.original.parent];
+    if (!n_par) {
+      console.error("Error : Can't share your home / root");
+      return;
+    }
+    let n_parent = FileSystem._objects[n_par.model];
+    if (!n_parent) {
+      console.error("Error : Can't share your home / root");
+      return;
+    }
+    let m_node;
+    for (var i = 0; i < n_parent.length; i++) {
+      if (n_parent[i]._ptr.data.value == node.original.model) {
+        m_node = n_parent[i];
+        break;
+      }
+    }
     mdDialog.show({
       controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
       template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
       locals: {
-        model_server_id: obj.model_server_id,
+        model_server_id: m_node._server_id,
         spinalModelDictionary: spinalModelDictionary,
         mdDialog: mdDialog,
         ngSpinalCore: ngSpinalCore
