@@ -10,7 +10,13 @@ class SpinalDrive_App_FileExplorer_Download extends SpinalDrive_App {
    * @memberof SpinalDrive_App_FileExplorer_Download
    */
   constructor() {
-    super("DownloadFileExplorer", "Download...", 15, "edit", "Download a File");
+    super(
+      "DownloadFileExplorer",
+      "Download...",
+      15,
+      "file_download",
+      "Download a File"
+    );
   }
   /**
    * method to handle the selection
