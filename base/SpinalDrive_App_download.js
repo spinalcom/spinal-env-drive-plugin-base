@@ -1,3 +1,5 @@
+const spinalEnvDriveCore = require("spinal-env-drive-core");
+const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
 /**
  * SpinalDrive_App_FileExplorer_Download
  * @extends {SpinalDrive_App}
@@ -18,7 +20,7 @@ class SpinalDrive_App_FileExplorer_Download extends SpinalDrive_App {
    */
   action(obj) {
     let mdDialog = obj.scope.injector.get("$mdDialog");
-    let f = FileSystem._objects[obj.file._server_id];
+    let f = window.FileSystem._objects[obj.file._server_id];
     var confirm = mdDialog
       .confirm()
       .title("Do you want download " + f.name.get() + " ?")
@@ -46,8 +48,8 @@ class SpinalDrive_App_FileExplorer_Download extends SpinalDrive_App {
   is_shown(d) {
     if (d && d.file && d.file._server_id) {
       let file = window.FileSystem._objects[d.file._server_id];
-      if (file) {
-        if (file instanceof File) {
+      if (file && file._info && file._info.model_type) {
+        if (file._info.model_type.get() === "Path") {
           return true;
         }
       }

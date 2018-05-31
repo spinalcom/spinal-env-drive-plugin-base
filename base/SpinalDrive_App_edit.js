@@ -15,58 +15,71 @@ class SpinalDrive_App_Edit extends SpinalDrive_App {}
  * @param {angularFactory} mdDialog same
  * @param {angularFactory} ngSpinalCore same
  */
-SpinalDrive_App_Edit.DialogEditCtrl = function ($scope, $mdDialog, model_server_id, spinalModelDictionary, mdDialog, ngSpinalCore) {
+SpinalDrive_App_Edit.DialogEditCtrl = function(
+  $scope,
+  $mdDialog,
+  model_server_id,
+  spinalModelDictionary,
+  mdDialog,
+  ngSpinalCore
+) {
   let mod = FileSystem._objects[model_server_id];
   $scope.editModel = mod;
   $scope.modelData = mod.get();
   $scope.editModelContruct = mod.constructor.name;
   $scope.editForm = {};
 
-  $scope.cancelDialog = function () {
+  $scope.cancelDialog = function() {
     $mdDialog.hide();
   };
 
-  $scope.submitDialog = function () {
+  $scope.submitDialog = function() {
     mod.set($scope.editForm.modelData.$modelValue);
     $mdDialog.hide();
   };
-  $scope.isStr = (m) => {
+  $scope.isStr = m => {
     return m instanceof Str;
   };
-  $scope.isVal = (m) => {
+  $scope.isVal = m => {
     return m instanceof Val;
   };
-  $scope.isBool = (m) => {
+  $scope.isBool = m => {
     return m instanceof Bool;
   };
 };
 
-angular.module('app.spinal-panel')
-  .run(["$templateCache", "$http",
-    function ($templateCache, $http) {
-      let load_template = (uri, name) => {
-        $http.get(uri).then((response) => {
+angular.module("app.spinal-panel").run([
+  "$templateCache",
+  "$http",
+  function($templateCache, $http) {
+    let load_template = (uri, name) => {
+      $http.get(uri).then(
+        response => {
           $templateCache.put(name, response.data);
-        }, (errorResponse) => {
-          console.log('Cannot load the file ' + uri);
-        });
-      };
-      let toload = [{
-        uri: '../templates/spinal-env-drive-plugin-base/SpinalDrive_App_Edit_EditTemplate.html',
-        name: 'SpinalDrive_App_Edit_EditTemplate.html'
-      }];
-      for (var i = 0; i < toload.length; i++) {
-        load_template(toload[i].uri, toload[i].name);
+        },
+        errorResponse => {
+          console.log("Cannot load the file " + uri);
+        }
+      );
+    };
+    let toload = [
+      {
+        uri:
+          "../templates/spinal-env-drive-plugin-base/SpinalDrive_App_Edit_EditTemplate.html",
+        name: "SpinalDrive_App_Edit_EditTemplate.html"
       }
+    ];
+    for (var i = 0; i < toload.length; i++) {
+      load_template(toload[i].uri, toload[i].name);
     }
-  ]);
+  }
+]);
 
 /**
  * SpinalDrive_App_Inspector_edit
  * @extends {SpinalDrive_App_Edit}
  */
 class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
-
   /**
    * Creates an instance of SpinalDrive_App_Inspector_edit.
    * @memberof SpinalDrive_App_Inspector_edit
@@ -77,18 +90,26 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
   }
   /**
    * method to handle the selection
-   * 
-   * @param {any} element 
+   *
+   * @param {any} element
    * @memberof SpinalDrive_App_Inspector_edit
    */
   action(obj) {
-    let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
-    let mdDialog = obj.scope.injector.get('$mdDialog');
-    let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
-    let templateCache = obj.scope.injector.get('$templateCache');
+    let spinalModelDictionary = obj.scope.injector.get("spinalModelDictionary");
+    let mdDialog = obj.scope.injector.get("$mdDialog");
+    let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
+    let templateCache = obj.scope.injector.get("$templateCache");
     mdDialog.show({
-      ariaLabel: 'Edit',
-      controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_Edit.DialogEditCtrl],
+      ariaLabel: "Edit",
+      controller: [
+        "$scope",
+        "$mdDialog",
+        "model_server_id",
+        "spinalModelDictionary",
+        "mdDialog",
+        "ngSpinalCore",
+        SpinalDrive_App_Edit.DialogEditCtrl
+      ],
       template: templateCache.get("SpinalDrive_App_Edit_EditTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
@@ -112,7 +133,7 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
     if (d && d.data && d.data._server_id) {
       let m = FileSystem._objects[d.data._server_id];
       if (m) {
-        return (m instanceof Val || m instanceof Bool || m instanceof Str);
+        return m instanceof Val || m instanceof Bool || m instanceof Str;
       }
     }
     return false;

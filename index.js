@@ -24,6 +24,7 @@
 
 module.extends = {};
 require("spinal-env-drive-core");
+const spinalDrive_Env = window.spinalDrive_Env;
 
 function concat_lib(lib) {
   for (var key in lib) {
@@ -40,11 +41,15 @@ concat_lib(require("./base/SpinalDrive_App_download"));
 
 spinalDrive_Env.add_applications(
   "FileExplorer",
-  new SpinalDrive_App_FileExplorer_delete()
+  new module.exports.SpinalDrive_App_FileExplorer_delete()
+);
+spinalDrive_Env.add_applications(
+  "FileExplorerCurrDir",
+  new module.exports.SpinalDrive_App_FileExplorer_currdir_delete()
 );
 spinalDrive_Env.add_applications(
   "FolderExplorer",
-  new SpinalDrive_App_FolderExplorer_delete()
+  new module.exports.SpinalDrive_App_FolderExplorer_delete()
 );
 spinalDrive_Env.add_applications(
   "Inspector",

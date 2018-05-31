@@ -15,8 +15,15 @@ class SpinalDrive_App_share extends SpinalDrive_App {}
  * @param {angularFactory} mdDialog same
  * @param {angularFactory} ngSpinalCore same
  */
-SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_server_id, spinalModelDictionary, mdDialog, ngSpinalCore) {
-  spinalModelDictionary.init().then(function () {
+SpinalDrive_App_share.DialogShareCtrl = function(
+  $scope,
+  $mdDialog,
+  model_server_id,
+  spinalModelDictionary,
+  mdDialog,
+  ngSpinalCore
+) {
+  spinalModelDictionary.init().then(function() {
     $scope.users = spinalModelDictionary.users.get();
     $scope.rightRead = false;
     $scope.rightWrite = false;
@@ -27,22 +34,23 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
     });
     let mod = FileSystem._objects[model_server_id];
     let _data = 0;
-    if (mod instanceof File)
-      _data = mod._ptr.data.value;
-    else if (mod instanceof Ptr)
-      _data = mod.data.value;
-    else
-      _data = mod._server_id;
-    ngSpinalCore.load_right(_data).then((res) => {
-      create_rightList(res);
-    }, (err) => {
-      console.error("load_right: couldn't load the right of the model " + model_server_id);
-    });
+    if (mod instanceof File) _data = mod._ptr.data.value;
+    else if (mod instanceof Ptr) _data = mod.data.value;
+    else _data = mod._server_id;
+    ngSpinalCore.load_right(_data).then(
+      res => {
+        create_rightList(res);
+      },
+      err => {
+        console.error(
+          "load_right: couldn't load the right of the model " + model_server_id
+        );
+      }
+    );
   });
 
   function create_right_col(flag, flagType) {
-    if (flag & flagType)
-      return "Yes";
+    if (flag & flagType) return "Yes";
     return "No";
   }
 
@@ -63,7 +71,7 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
   /**
    * Return the proper object when the append is called.
    */
-  $scope.transformChip = function (chip) {
+  $scope.transformChip = function(chip) {
     // If it is an object, it's already a known chip
     if (angular.isObject(chip)) {
       return chip;
@@ -71,32 +79,35 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
     // Otherwise, create a new one
     return {
       name: chip,
-      type: 'new'
+      type: "new"
     };
   };
   $scope.error_msgs = [];
   $scope.chip_users = [];
   $scope.selectedItem = null;
   $scope.searchText = null;
-  $scope.createFilterFor = (query) => {
+  $scope.createFilterFor = query => {
     var lowercaseQuery = angular.lowercase(query);
 
     return function filterFn(user) {
-      return (user._lowername.indexOf(lowercaseQuery) === 0) ||
-        (user.id.toString().indexOf(lowercaseQuery) === 0);
+      return (
+        user._lowername.indexOf(lowercaseQuery) === 0 ||
+        user.id.toString().indexOf(lowercaseQuery) === 0
+      );
     };
-
   };
 
-  $scope.querySearch = (query) => {
-    var results = query ? $scope.users.filter($scope.createFilterFor(query)) : [];
+  $scope.querySearch = query => {
+    var results = query
+      ? $scope.users.filter($scope.createFilterFor(query))
+      : [];
     return results;
   };
-  $scope.cancelDialog = function () {
+  $scope.cancelDialog = function() {
     $mdDialog.hide();
   };
 
-  $scope.submitDialog = function () {
+  $scope.submitDialog = function() {
     let flag = 0;
     $scope.error_msgs = [];
     if ($scope.rightRead == true) flag |= spinalCore.right_flag.RD;
@@ -115,65 +126,88 @@ SpinalDrive_App_share.DialogShareCtrl = function ($scope, $mdDialog, model_serve
 
     let data = FileSystem._objects[model_server_id];
     let file_name = "";
-    if (data.name)
-      file_name = data.name.get();
-    else
-      file_name = data.constructor.name + "_" + data._server_id;
+    if (data.name) file_name = data.name.get();
+    else file_name = data.constructor.name + "_" + data._server_id;
     for (var i = 0; i < $scope.chip_users.length; i++) {
-      ngSpinalCore.share_model(data, file_name, flag, $scope.chip_users[i].name);
+      ngSpinalCore.share_model(
+        data,
+        file_name,
+        flag,
+        $scope.chip_users[i].name
+      );
     }
     $mdDialog.hide();
   };
 };
 
-angular.module('app.spinal-panel')
-  .run(["$templateCache", "$http",
-    function ($templateCache, $http) {
-      let load_template = (uri, name) => {
-        $http.get(uri).then((response) => {
+angular.module("app.spinal-panel").run([
+  "$templateCache",
+  "$http",
+  function($templateCache, $http) {
+    let load_template = (uri, name) => {
+      $http.get(uri).then(
+        response => {
           $templateCache.put(name, response.data);
-        }, (errorResponse) => {
-          console.log('Cannot load the file ' + uri);
-        });
-      };
-      let toload = [{
-        uri: '../templates/spinal-env-drive-plugin-base/Spinal_App_ShareTemplate.html',
-        name: 'Spinal_App_ShareTemplate.html'
-      }];
-      for (var i = 0; i < toload.length; i++) {
-        load_template(toload[i].uri, toload[i].name);
+        },
+        errorResponse => {
+          console.log("Cannot load the file " + uri);
+        }
+      );
+    };
+    let toload = [
+      {
+        uri:
+          "../templates/spinal-env-drive-plugin-base/Spinal_App_ShareTemplate.html",
+        name: "Spinal_App_ShareTemplate.html"
       }
+    ];
+    for (var i = 0; i < toload.length; i++) {
+      load_template(toload[i].uri, toload[i].name);
     }
-  ]);
+  }
+]);
 
 /**
  * SpinalDrive_App_FileExplorer_share
  * @extends {SpinalDrive_App_share}
  */
 class SpinalDrive_App_FileExplorer_share extends SpinalDrive_App_share {
-
   /**
    * Creates an instance of SpinalDrive_App_FileExplorer_share.
    * @memberof SpinalDrive_App_FileExplorer_share
    */
   constructor() {
-    super("ShareFileExplorer", "Share...", 2, "share", "Share Models with other Users");
+    super(
+      "ShareFileExplorer",
+      "Share...",
+      2,
+      "share",
+      "Share Models with other Users"
+    );
     // super("ShareFileExplorer", "Share...", 2, "share", "Share Models with other Users", "share", ["all"], "all");
   }
   /**
    * method to handle the selection
-   * 
-   * @param {any} element 
+   *
+   * @param {any} element
    * @memberof SpinalDrive_App_FileExplorer_share
    */
   action(obj) {
     console.log(obj);
-    let templateCache = obj.scope.injector.get('$templateCache');
-    let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
-    let mdDialog = obj.scope.injector.get('$mdDialog');
-    let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
+    let templateCache = obj.scope.injector.get("$templateCache");
+    let spinalModelDictionary = obj.scope.injector.get("spinalModelDictionary");
+    let mdDialog = obj.scope.injector.get("$mdDialog");
+    let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
     mdDialog.show({
-      controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
+      controller: [
+        "$scope",
+        "$mdDialog",
+        "model_server_id",
+        "spinalModelDictionary",
+        "mdDialog",
+        "ngSpinalCore",
+        SpinalDrive_App_share.DialogShareCtrl
+      ],
       template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       targetEvent: obj.evt,
@@ -183,41 +217,44 @@ class SpinalDrive_App_FileExplorer_share extends SpinalDrive_App_share {
         spinalModelDictionary: spinalModelDictionary,
         mdDialog: mdDialog,
         ngSpinalCore: ngSpinalCore
-      },
-
+      }
     });
   }
 }
 
 module.exports.FileExplorerShare = SpinalDrive_App_FileExplorer_share;
 
-
 /**
  * SpinalDrive_App_FolderExplorer_share
  * @extends {SpinalDrive_App_share}
  */
 class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
-
   /**
    * Creates an instance of SpinalDrive_App_FolderExplorer_share.
    * @memberof SpinalDrive_App_FolderExplorer_share
    */
   constructor() {
-    super("ShareFolderExplorer", "Share...", 3, "fa fa-share-alt", "Share Models with other Users");
+    super(
+      "ShareFolderExplorer",
+      "Share...",
+      3,
+      "fa fa-share-alt",
+      "Share Models with other Users"
+    );
     // super("ShareFolderExplorer", "Share...", 3, "fa fa-share-alt", "Share Models with other Users", "share", ["all"], "all");
   }
   /**
    * method to handle the selection
-   * 
-   * @param {any} element 
+   *
+   * @param {any} element
    * @memberof SpinalDrive_App_FolderExplorer_share
    */
   action(obj) {
-    let templateCache = obj.scope.injector.get('$templateCache');
-    let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
-    let mdDialog = obj.scope.injector.get('$mdDialog');
-    let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
-    let spinalFileSystem = obj.scope.injector.get('spinalFileSystem');
+    let templateCache = obj.scope.injector.get("$templateCache");
+    let spinalModelDictionary = obj.scope.injector.get("spinalModelDictionary");
+    let mdDialog = obj.scope.injector.get("$mdDialog");
+    let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
+    let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
 
     let node = obj.node;
     let n_par = spinalFileSystem.folderExplorer_dir[node.original.parent];
@@ -238,7 +275,15 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
       }
     }
     mdDialog.show({
-      controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
+      controller: [
+        "$scope",
+        "$mdDialog",
+        "model_server_id",
+        "spinalModelDictionary",
+        "mdDialog",
+        "ngSpinalCore",
+        SpinalDrive_App_share.DialogShareCtrl
+      ],
       template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
@@ -258,28 +303,41 @@ module.exports.FolderExplorerShare = SpinalDrive_App_FolderExplorer_share;
  * @extends {SpinalDrive_App_share}
  */
 class SpinalDrive_App_Inspector_share extends SpinalDrive_App_share {
-
   /**
    * Creates an instance of SpinalDrive_App_Inspector_share.
    * @memberof SpinalDrive_App_Inspector_share
    */
   constructor() {
-    super("ShareInspector", "Share...", 3, "share", "Share Models with other Users");
+    super(
+      "ShareInspector",
+      "Share...",
+      3,
+      "share",
+      "Share Models with other Users"
+    );
     // super("ShareInspector", "Share...", 3, "share", "Share Models with other Users", "share", ["all"], "all");
   }
   /**
    * method to handle the selection
-   * 
-   * @param {any} element 
+   *
+   * @param {any} element
    * @memberof SpinalDrive_App_Inspector_share
    */
   action(obj) {
-    let templateCache = obj.scope.injector.get('$templateCache');
-    let spinalModelDictionary = obj.scope.injector.get('spinalModelDictionary');
-    let mdDialog = obj.scope.injector.get('$mdDialog');
-    let ngSpinalCore = obj.scope.injector.get('ngSpinalCore');
+    let templateCache = obj.scope.injector.get("$templateCache");
+    let spinalModelDictionary = obj.scope.injector.get("spinalModelDictionary");
+    let mdDialog = obj.scope.injector.get("$mdDialog");
+    let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
     mdDialog.show({
-      controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore", SpinalDrive_App_share.DialogShareCtrl],
+      controller: [
+        "$scope",
+        "$mdDialog",
+        "model_server_id",
+        "spinalModelDictionary",
+        "mdDialog",
+        "ngSpinalCore",
+        SpinalDrive_App_share.DialogShareCtrl
+      ],
       template: templateCache.get("Spinal_App_ShareTemplate.html"),
       parent: angular.element(document.body),
       clickOutsideToClose: true,
