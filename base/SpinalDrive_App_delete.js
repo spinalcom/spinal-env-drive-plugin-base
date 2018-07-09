@@ -93,6 +93,23 @@ class SpinalDrive_App_FolderExplorer_delete extends spinalEnvDriveCore.SpinalDri
    * @memberof SpinalDrive_App_FolderExplorer_delete
    */
   action(obj) {
+    
+    if(FileSystem._objects[obj.file._server_id]_info.visaValidation) {
+       $mdDialog.show(
+                $mdDialog.alert()
+                .parent(angular.element(document.body))
+                .clickOutsideToClose(true)
+                .title('Sorry')
+                .textContent('Sorry this file has already been sent for validation !!!')
+                .ariaLabel('Alert')
+                .ok('OK')
+                .targetEvent(obj.evt)
+            );
+      
+            return;
+      
+    }
+    
     let mdDialog = obj.scope.injector.get("$mdDialog");
     let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
 
