@@ -94,7 +94,7 @@ class SpinalDrive_App_FolderExplorer_delete extends spinalEnvDriveCore.SpinalDri
    */
   action(obj) {
     
-    if(FileSystem._objects[obj.file._server_id]._info.visaValidation) {
+    if(FileSystem._objects[obj.file._server_id]._info.visaValidation || FileSystem._objects[obj.file._server_id]._info.admin) {
        $mdDialog.show(
                 $mdDialog.alert()
                 .parent(angular.element(document.body))
