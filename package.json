@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-drive-plugin-base",
-  "version": "v1.0.5",
+  "version": "v1.0.6",
   "description": "basic plugin in spinal-browser-drive",
   "main": "index.js",
   "dependencies": {
