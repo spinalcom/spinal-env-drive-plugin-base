@@ -87,7 +87,7 @@ SpinalDrive_App_share.DialogShareCtrl = function(
   $scope.selectedItem = null;
   $scope.searchText = null;
   $scope.createFilterFor = query => {
-    var lowercaseQuery = angular.lowercase(query);
+    var lowercaseQuery = query.toLowerCase();
 
     return function filterFn(user) {
       return (
