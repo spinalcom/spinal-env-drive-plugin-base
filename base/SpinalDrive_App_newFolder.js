@@ -53,6 +53,16 @@ class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
       function() {}
     );
   }
+  is_shown(b){
+    console.log(b);
+    console.log('loris', b.scope.injector.get('ngSpinalCore'));
+    b.scope.injector.get('ngSpinalCore').load_right(b.model._server_id)
+      .then(res => {
+        console.log('load_right',res)
+      
+      })
+    return Promise.resolve(true);
+  }
 }
 
 module.exports.FileExplorerCurrDirNewFolder = SpinalDrive_App_FileExplorer_currdir_newFolder;

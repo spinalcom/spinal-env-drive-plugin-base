@@ -56,6 +56,30 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
       function() {}
     );
   }
+  
+  getUserRight(spinalcore, serverId){
+    const userId = window.FileSystem._userId;
+    spinalcore.load_right(serverId)
+      .then(userRight => {
+        for (let i = 0; i < userRight.length; i++) {
+          if (userRight[i].user.id.get() === userid) {
+            return userRight[i].flag.val.get();
+          }
+        }
+        return -1;
+      })
+  }
+  
+  is_shown(b){
+    this.getUserRight(b.scope.injector
+      .get('ngSpinalCore'), b.file._server_id)
+      .then(flag)
+    b.scope.injector.get('ngSpinalCore').load_right(b.file._server_id)
+      .then(res => {
+        console.log('load_right',res)
+      })
+    return Promise.resolve(true);
+  }
 }
 
 module.exports.FileExplorerRename = SpinalDrive_App_FileExplorer_rename;
