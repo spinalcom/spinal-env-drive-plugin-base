@@ -33,7 +33,6 @@ function concat_lib(lib) {
 }
 concat_lib(require("./base/SpinalDrive_App_delete"));
 concat_lib(require("./base/SpinalDrive_App_edit"));
-concat_lib(require("./base/SpinalDrive_App_issim"));
 concat_lib(require("./base/SpinalDrive_App_newFolder"));
 concat_lib(require("./base/SpinalDrive_App_renameFile"));
 concat_lib(require("./base/SpinalDrive_App_share"));
@@ -53,41 +52,33 @@ spinalDrive_Env.add_applications(
 );
 spinalDrive_Env.add_applications(
   "Inspector",
-  new SpinalDrive_App_Inspector_edit()
-);
-spinalDrive_Env.add_applications(
-  "FileExplorerCurrDir",
-  new SpinalDrive_App_FileExplorer_currdir_issim()
-);
-spinalDrive_Env.add_applications(
-  "FileExplorer",
-  new SpinalDrive_App_FileExplorer_issim()
+  new module.exports.InspectorEdit()
 );
 spinalDrive_Env.add_applications(
   "FolderExplorer",
-  new SpinalDrive_App_FolderExplorer_newFolder()
+  new module.exports.FolderExplorerNewFolder()
 );
 spinalDrive_Env.add_applications(
   "FileExplorerCurrDir",
-  new SpinalDrive_App_FileExplorer_currdir_newFolder()
+  new module.exports.FileExplorerCurrDirNewFolder()
 );
 spinalDrive_Env.add_applications(
   "FileExplorer",
-  new SpinalDrive_App_FileExplorer_rename()
+  new module.exports.FileExplorerRename()
 );
 spinalDrive_Env.add_applications(
   "FileExplorer",
-  new SpinalDrive_App_FileExplorer_share()
+  new module.exports.FileExplorerShare()
 );
 spinalDrive_Env.add_applications(
   "FolderExplorer",
-  new SpinalDrive_App_FolderExplorer_share()
+  new module.exports.FolderExplorerShare()
 );
 spinalDrive_Env.add_applications(
   "Inspector",
-  new SpinalDrive_App_Inspector_share()
+  new module.exports.InspectorShare()
 );
 spinalDrive_Env.add_applications(
   "FileExplorer",
-  new SpinalDrive_App_FileExplorer_Download()
+  new module.exports.FileExplorerDownload()
 );
