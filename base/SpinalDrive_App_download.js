@@ -1,5 +1,8 @@
+import { getRight } from "./GetRight";
+
 const spinalEnvDriveCore = require("spinal-env-drive-core");
 const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
+
 /**
  * SpinalDrive_App_FileExplorer_Download
  * @extends {SpinalDrive_App}
@@ -51,12 +54,15 @@ class SpinalDrive_App_FileExplorer_Download extends SpinalDrive_App {
       function() {}
     );
   }
-  is_shown(d) {
+  is_shown(d, spinalcore) {
     if (d && d.file && d.file._server_id) {
       let file = window.FileSystem._objects[d.file._server_id];
       if (file && file._info && file._info.model_type) {
         if (file._info.model_type.get() === "Path") {
-          return true;
+          return getRight( spinalcore, d.file._server_id )
+            .then( flags => {
+              return (flags & window.spinalCore.right_flag.RD) !== 0;
+            } );
         }
       }
     }

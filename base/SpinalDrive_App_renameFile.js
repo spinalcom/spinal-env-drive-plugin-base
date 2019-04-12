@@ -2,6 +2,8 @@
  * SpinalDrive_App_FileExplorer_rename
  * @extends {SpinalDrive_App}
  */
+import { getRight } from "./GetRight";
+
 class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
   /**
    * Creates an instance of SpinalDrive_App_FileExplorer_rename.
@@ -55,6 +57,12 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
       },
       function() {}
     );
+  }
+  is_shown(d,spinalcore) {
+    return getRight( spinalcore, d.file._server_id )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.WR) !== 0;
+      } );
   }
 }
 

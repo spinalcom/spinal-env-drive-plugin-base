@@ -2,6 +2,8 @@
  * SpinalDrive_App_FileExplorer_currdir_newFolder
  * @extends {SpinalDrive_App}
  */
+import { getRight } from "./GetRight";
+
 class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
   /**
    * Creates an instance of SpinalDrive_App_FileExplorer_currdir_newFolder.
@@ -53,6 +55,13 @@ class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
       function() {}
     );
   }
+  is_shown(d, spinalcore) {
+    return true;
+    return getRight( spinalcore, d.model._server_id )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.WR) !== 0;
+      } );
+  }
 }
 
 module.exports.FileExplorerCurrDirNewFolder = SpinalDrive_App_FileExplorer_currdir_newFolder;
@@ -75,6 +84,7 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
       "Create a new Folder"
     );
   }
+  
   /**
    * method to handle the selection
    *
@@ -105,6 +115,12 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
       },
       function() {}
     );
+  }
+  is_shown(d, spinalcore) {
+    return getRight( spinalcore, d.original.model )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.WR) !== 0;
+      } );
   }
 }
 

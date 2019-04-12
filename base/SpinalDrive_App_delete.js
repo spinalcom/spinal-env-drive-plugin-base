@@ -1,45 +1,48 @@
-const spinalEnvDriveCore = require('spinal-env-drive-core');
-require('spinal-core-connectorjs');
+import { getRight } from "./GetRight";
+
+const spinalEnvDriveCore = require( 'spinal-env-drive-core' );
+require( 'spinal-core-connectorjs' );
+
 
 /**
  * SpinalDrive_App_FileExplorer_delete
  * @extends {SpinalDrive_App}
  */
-class SpinalDrive_App_FileExplorer_delete extends
-  spinalEnvDriveCore.SpinalDrive_App {
+class SpinalDrive_App_FileExplorer_delete extends spinalEnvDriveCore.SpinalDrive_App {
   /**
    * Creates an instance of SpinalDrive_App_FileExplorer_delete.
    * @memberof SpinalDrive_App_FileExplorer_delete
    */
   constructor() {
-    super('DeleleFileExplorer', 'Delete', 1, 'delete', 'Delete the file');
+    super( 'DeleleFileExplorer', 'Delete', 1, 'delete', 'Delete the file' );
     this.order_priority = -1;
     // super("DeleleFileExplorer", "Delete", 1, "delete", "Delete the file",
     // "delete", ["all"], "all");
   }
+  
   /**
    * method to handle the selection
    *
    * @param {any} element
    * @memberof SpinalDrive_App_FileExplorer_delete
    */
-  action(obj) {
-    let mdDialog = obj.scope.injector.get('$mdDialog');
+  action( obj ) {
+    let mdDialog = obj.scope.injector.get( '$mdDialog' );
     let content = 'Are you sure to delete the file / folder';
     if (obj && obj.file && obj.file.name) content += ' : ' + obj.file.name;
     let newFolder_prompt = mdDialog.confirm()
-      .title('Delete')
-      .textContent(content)
-      .ariaLabel('Delete Directory file')
-      .clickOutsideToClose(true)
-      .ok('Confirm')
-      .cancel('Cancel');
-
-    mdDialog.show(newFolder_prompt)
+      .title( 'Delete' )
+      .textContent( content )
+      .ariaLabel( 'Delete Directory file' )
+      .clickOutsideToClose( true )
+      .ok( 'Confirm' )
+      .cancel( 'Cancel' );
+    
+    mdDialog.show( newFolder_prompt )
       .then(
-        function() {
+        function () {
           if (!(obj && obj.scope && obj.scope.curr_dir && obj.file &&
-              obj.file._server_id)) {
+            obj.file._server_id)) {
             return;
           }
           let f = window.FileSystem._objects[obj.file._server_id];
@@ -48,16 +51,17 @@ class SpinalDrive_App_FileExplorer_delete extends
             for (var i = 0; i < m_parent.length; i++) {
               if (m_parent[i]._server_id == f._server_id &&
                 obj.file.name == m_parent[i].name.get()) {
-                m_parent.remove_ref(m_parent[i]);
+                m_parent.remove_ref( m_parent[i] );
                 break;
               }
             }
           }
         },
-        function() {});
+        function () {} );
   }
-
-  is_shown(d) {
+  
+  is_shown( d, spinalcore ) {
+    
     if (d && d.file && d.file._server_id) {
       let file = window.FileSystem._objects[d.file._server_id];
       if (file && file._info && file._info.model_type) {
@@ -65,12 +69,15 @@ class SpinalDrive_App_FileExplorer_delete extends
           file._info.model_type.get() === "HttpPath") {
           return false;
         }
-        return true;
+        return getRight(spinalcore, d.file._server_id )
+          .then( flags => {
+            return (flags & window.spinalCore.right_flag.WR) !== 0;
+          } );
       }
     }
     return false;
   }
-
+  
 }
 
 module.exports.SpinalDrive_App_FileExplorer_delete =
@@ -80,8 +87,7 @@ module.exports.SpinalDrive_App_FileExplorer_delete =
  * SpinalDrive_App_FolderExplorer_delete
  * @extends {SpinalDrive_App}
  */
-class SpinalDrive_App_FolderExplorer_delete extends
-  spinalEnvDriveCore.SpinalDrive_App {
+class SpinalDrive_App_FolderExplorer_delete extends spinalEnvDriveCore.SpinalDrive_App {
   /**
    * Creates an instance of SpinalDrive_App_FolderExplorer_delete.
    * @memberof SpinalDrive_App_FolderExplorer_delete
@@ -89,12 +95,12 @@ class SpinalDrive_App_FolderExplorer_delete extends
   constructor() {
     super(
       'DeleleFolderExplorer', 'Delete', 0, 'fa fa-trash text-danger',
-      'Delete the file');
+      'Delete the file' );
     // super("DeleleFolderExplorer", "Delete", 0, "fa fa-trash text-danger",
     // "Delete the file", "delete", ["all"], "all");
   }
-
-  is_shown(d) {
+  
+  is_shown( d ) {
     // console.log("FolderExplorer_delete", d);
     return false;
     // if (d && d.file && d.file._server_id) {
@@ -107,16 +113,16 @@ class SpinalDrive_App_FolderExplorer_delete extends
     // }
     // return false;
   }
-
-
+  
+  
   /**
    * method to handle the selection
    *
    * @param {any} element
    * @memberof SpinalDrive_App_FolderExplorer_delete
    */
-  action(obj) {
-    let mdDialog = obj.scope.injector.get('$mdDialog');
+  action( obj ) {
+    let mdDialog = obj.scope.injector.get( '$mdDialog' );
     const parent = obj.scope.all_dir[obj.node.parent];
     const parentDirectoryModel = FileSystem._objects[parent.model];
     for (let index = 0; index < parentDirectoryModel.length; index++) {
@@ -125,40 +131,41 @@ class SpinalDrive_App_FolderExplorer_delete extends
         if (file._info.visaValidation) {
           mdDialog.show(
             mdDialog.alert()
-              .parent(angular.element(document.body))
-              .clickOutsideToClose(true)
-              .title('Sorry')
+              .parent( angular.element( document.body ) )
+              .clickOutsideToClose( true )
+              .title( 'Sorry' )
               .textContent(
-                'Sorry this file has already been sent for validation !!!')
-              .ariaLabel('Alert')
-              .ok('OK')
-              .targetEvent(obj.evt));
-
+                'Sorry this file has already been sent for validation !!!' )
+              .ariaLabel( 'Alert' )
+              .ok( 'OK' )
+              .targetEvent( obj.evt ) );
+          
           return;
         }
         break;
       }
     }
-
-    let spinalFileSystem = obj.scope.injector.get('spinalFileSystem');
+    
+    let spinalFileSystem = obj.scope.injector.get( 'spinalFileSystem' );
     let content = 'Are you sure to delete the folder';
     if (obj && obj.node && obj.node.text) content += ' : ' + obj.node.text;
     let newFolder_prompt = mdDialog.confirm()
-      .title('Delete')
-      .textContent(content)
-      .ariaLabel('Delete Directory file')
-      .clickOutsideToClose(true)
-      .ok('Confirm')
-      .cancel('Cancel');
-
-    mdDialog.show(newFolder_prompt)
+      .title( 'Delete' )
+      .textContent( content )
+      .ariaLabel( 'Delete Directory file' )
+      .clickOutsideToClose( true )
+      .ok( 'Confirm' )
+      .cancel( 'Cancel' );
+    
+    mdDialog.show( newFolder_prompt )
       .then(
-        function() {
-          spinalFileSystem.deleteFolder(obj.scope.all_dir, obj.node);
+        function () {
+          spinalFileSystem.deleteFolder( obj.scope.all_dir, obj.node );
         },
-        function() {});
+        function () {} );
   }
 }
+
 module.exports.SpinalDrive_App_FolderExplorer_delete =
   SpinalDrive_App_FolderExplorer_delete;
 
@@ -166,8 +173,7 @@ module.exports.SpinalDrive_App_FolderExplorer_delete =
  * SpinalDrive_App_FileExplorer_currdir_delete
  * @extends {SpinalDrive_App}
  */
-class SpinalDrive_App_FileExplorer_currdir_delete extends
-  spinalEnvDriveCore.SpinalDrive_App {
+class SpinalDrive_App_FileExplorer_currdir_delete extends spinalEnvDriveCore.SpinalDrive_App {
   /**
    * Creates an instance of SpinalDrive_App_FileExplorer_currdir_delete.
    * @memberof SpinalDrive_App_FileExplorer_currdir_delete
@@ -175,17 +181,18 @@ class SpinalDrive_App_FileExplorer_currdir_delete extends
   constructor() {
     super(
       'DeleleFileExplorer_currdir', 'Delete Selected', 1, 'delete',
-      'Delete the selected file(s)');
+      'Delete the selected file(s)' );
     this.order_priority = -1;
   }
+  
   /**
    * method to handle the selection
    *
    * @param {any} element
    * @memberof SpinalDrive_App_FileExplorer_currdir_delete
    */
-  action(obj) {
-    let mdDialog = obj.scope.injector.get('$mdDialog');
+  action( obj ) {
+    let mdDialog = obj.scope.injector.get( '$mdDialog' );
     let content = 'Are you sure to delete the file(s) / folder(s)';
     let files = [];
     let filesIgnore = [];
@@ -193,32 +200,32 @@ class SpinalDrive_App_FileExplorer_currdir_delete extends
       if (obj.scope.directory[i].selected === true) {
         if (obj.scope.directory[i].model_type !== "HttpPath" ||
           obj.scope.directory[i].model_type !== "Synchronized Directory") {
-          filesIgnore.push(obj.scope.directory[i]);
+          filesIgnore.push( obj.scope.directory[i] );
         } else {
-          files.push(obj.scope.directory[i]);
+          files.push( obj.scope.directory[i] );
         }
       }
     }
-
+    
     if (files.length > 0) {
-      content += ' : ' + files.map(x => x.name).join(
-        ', ');
+      content += ' : ' + files.map( x => x.name ).join(
+        ', ' );
     }
     if (filesIgnore.length > 0) {
       content += ' \n ignored: ' + filesIgnore
-        .map(x => x.name).join(', ');
+        .map( x => x.name ).join( ', ' );
     }
     let newFolder_prompt = mdDialog.confirm()
-      .title('Delete')
-      .textContent(content)
-      .ariaLabel('Delete Directory file')
-      .clickOutsideToClose(true)
-      .ok('Confirm')
-      .cancel('Cancel');
-
-    mdDialog.show(newFolder_prompt)
+      .title( 'Delete' )
+      .textContent( content )
+      .ariaLabel( 'Delete Directory file' )
+      .clickOutsideToClose( true )
+      .ok( 'Confirm' )
+      .cancel( 'Cancel' );
+    
+    mdDialog.show( newFolder_prompt )
       .then(
-        function() {
+        function () {
           let m_parent = obj.model;
           for (var y = 0; y < files.length; y++) {
             let f = window.FileSystem._objects[files[y]._server_id];
@@ -226,22 +233,27 @@ class SpinalDrive_App_FileExplorer_currdir_delete extends
               for (var i = 0; i < m_parent.length; i++) {
                 if (m_parent[i]._server_id == f._server_id &&
                   files[y].name == m_parent[i].name.get()) {
-                  m_parent.remove_ref(m_parent[i]);
+                  m_parent.remove_ref( m_parent[i] );
                   break;
                 }
               }
             }
           }
         },
-        function() {});
+        function () {} );
   }
-
-  is_shown(d) {
+  
+  is_shown( d, spinalcore ) {
     for (var i = 0; i < d.scope.directory.length; i++) {
-      if (d.scope.directory[i].selected === true) return true;
+      if (d.scope.directory[i].selected === true)
+        return getRight( spinalcore, d.scope.directory[i]._server_id )
+          .then( flags => {
+            return (flags & window.spinalCore.right_flag.WR) !== 0;
+          } );
     }
     return false;
   }
 }
+
 module.exports.SpinalDrive_App_FileExplorer_currdir_delete =
   SpinalDrive_App_FileExplorer_currdir_delete;

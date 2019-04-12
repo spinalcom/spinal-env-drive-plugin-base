@@ -1,3 +1,4 @@
+
 /**
  * SpinalDrive_App_Edit
  * @extends {SpinalDrive_App}
@@ -129,11 +130,16 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
    * @returns {boolean}
    * @memberof SpinalDrive_App_Inspector_edit
    */
-  is_shown(d) {
+  is_shown(d, spinalcore) {
     if (d && d.data && d.data._server_id) {
       let m = FileSystem._objects[d.data._server_id];
       if (m) {
-        return m instanceof Val || m instanceof Bool || m instanceof Str;
+        return getRight( spinalcore, d.file._server_id )
+          .then( flags => {
+            return ((flags & window.spinalCore.right_flag.WR) !== 0)
+              && ( m instanceof Val || m instanceof Bool || m instanceof Str);
+          } );
+        
       }
     }
     return false;

@@ -1,3 +1,4 @@
+import { getRight } from "./GetRight";
 /**
  * SpinalDrive_App_share
  * @extends {SpinalDrive_App}
@@ -220,6 +221,12 @@ class SpinalDrive_App_FileExplorer_share extends SpinalDrive_App_share {
       }
     });
   }
+  is_shown(d, spinalcore) {
+    return getRight(spinalcore, d.file._server_id )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.AD) !== 0;
+      } );
+  }
 }
 
 module.exports.FileExplorerShare = SpinalDrive_App_FileExplorer_share;
@@ -295,6 +302,13 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
       }
     });
   }
+  is_shown(d, spinalcore) {
+    return getRight( spinalcore, d.original.model )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.AD) !== 0;
+      } );
+  }
+
 }
 module.exports.FolderExplorerShare = SpinalDrive_App_FolderExplorer_share;
 
@@ -357,8 +371,11 @@ class SpinalDrive_App_Inspector_share extends SpinalDrive_App_share {
    * @returns {boolean}
    * @memberof SpinalDrive_App_Inspector_share
    */
-  is_shown(d) {
-    return true;
+  is_shown(d, spinalcore) {
+    return getRight(spinalcore, d.file._server_id )
+      .then( flags => {
+        return (flags & window.spinalCore.right_flag.AD) !== 0;
+      } );
   }
 }
 module.exports.InspectorShare = SpinalDrive_App_Inspector_share;
