@@ -248,10 +248,10 @@ class SpinalDrive_App_FileExplorer_currdir_delete extends spinalEnvDriveCore.Spi
       if (d.scope.directory[i].selected === true)
         return getRight( spinalcore, d.scope.directory[i]._server_id )
           .then( flags => {
-            return (flags & window.spinalCore.right_flag.WR) !== 0;
+            return Promise.resolve((flags & window.spinalCore.right_flag.WR) !== 0);
           } );
     }
-    return false;
+    return Promise.resolve(false);
   }
 }
 

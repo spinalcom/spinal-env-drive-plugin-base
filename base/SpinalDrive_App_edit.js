@@ -142,7 +142,7 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
         
       }
     }
-    return false;
+    return Promise.resolve(false);
   }
 }
 module.exports.InspectorEdit = SpinalDrive_App_Inspector_edit;

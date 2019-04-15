@@ -66,7 +66,7 @@ class SpinalDrive_App_FileExplorer_Download extends SpinalDrive_App {
         }
       }
     }
-    return false;
+    return Promise.resolve(false);
   }
 }
 
