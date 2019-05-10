@@ -1,8 +1,10 @@
+const spinalEnvDriveCore = require('spinal-env-drive-core');
+const angular = require('angular');
 /**
  * SpinalDrive_App_Edit
  * @extends {SpinalDrive_App}
  */
-class SpinalDrive_App_Edit extends SpinalDrive_App {}
+class SpinalDrive_App_Edit extends spinalEnvDriveCore.SpinalDrive_App {}
 /**
  * DialogEditCtrl - controller to be added within a `$mdDialog.show` option parameter.
  *  e.g. {controller: ["$scope", "$mdDialog", "model_server_id", "spinalModelDictionary", "mdDialog", "ngSpinalCore",DialogEditCtrl], template: shareTemplate, ... , locals:
@@ -23,7 +25,7 @@ SpinalDrive_App_Edit.DialogEditCtrl = function(
   mdDialog,
   ngSpinalCore
 ) {
-  let mod = FileSystem._objects[model_server_id];
+  let mod = window.FileSystem._objects[model_server_id];
   $scope.editModel = mod;
   $scope.modelData = mod.get();
   $scope.editModelContruct = mod.constructor.name;
@@ -38,13 +40,13 @@ SpinalDrive_App_Edit.DialogEditCtrl = function(
     $mdDialog.hide();
   };
   $scope.isStr = m => {
-    return m instanceof Str;
+    return m instanceof window.Str;
   };
   $scope.isVal = m => {
-    return m instanceof Val;
+    return m instanceof window.Val;
   };
   $scope.isBool = m => {
-    return m instanceof Bool;
+    return m instanceof window.Bool;
   };
 };
 
@@ -57,7 +59,7 @@ angular.module("app.spinal-panel").run([
         response => {
           $templateCache.put(name, response.data);
         },
-        errorResponse => {
+        () => {
           console.log("Cannot load the file " + uri);
         }
       );
@@ -131,9 +133,9 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
    */
   is_shown(d) {
     if (d && d.data && d.data._server_id) {
-      let m = FileSystem._objects[d.data._server_id];
+      let m = window.FileSystem._objects[d.data._server_id];
       if (m) {
-        return m instanceof Val || m instanceof Bool || m instanceof Str;
+        return m instanceof window.Val || m instanceof window.Bool || m instanceof window.Str;
       }
     }
     return false;

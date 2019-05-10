@@ -1,6 +1,6 @@
-const spinalEnvDriveCore = require('spinal-env-drive-core');
 require('spinal-core-connectorjs');
-
+const spinalEnvDriveCore = require('spinal-env-drive-core');
+const angular = require('angular');
 /**
  * SpinalDrive_App_FileExplorer_delete
  * @extends {SpinalDrive_App}
@@ -87,7 +87,7 @@ class SpinalDrive_App_FolderExplorer_delete extends
   action(obj) {
     let mdDialog = obj.scope.injector.get('$mdDialog');
     const parent = obj.scope.all_dir[obj.node.parent];
-    const parentDirectoryModel = FileSystem._objects[parent.model];
+    const parentDirectoryModel = window.FileSystem._objects[parent.model];
     for (let index = 0; index < parentDirectoryModel.length; index++) {
       const file = parentDirectoryModel[index];
       if (file.name.get() === obj.node.text) {

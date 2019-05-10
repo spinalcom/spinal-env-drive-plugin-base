@@ -1,3 +1,6 @@
+const spinalEnvDriveCore = require("spinal-env-drive-core");
+const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
+
 /**
  * SpinalDrive_App_share
  * @extends {SpinalDrive_App}
