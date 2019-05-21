@@ -1,6 +1,6 @@
 const spinalEnvDriveCore = require("spinal-env-drive-core");
 const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
-
+const Directory = window.spinalCore._def["Directory"];
 /**
  * SpinalDrive_App_FileExplorer_currdir_newFolder
  * @extends {SpinalDrive_App}
@@ -44,6 +44,17 @@ class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
 
     mdDialog.show(confirm).then(
       result => {
+        let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
+        if (regex.test(result)) {
+          let mdToast = obj.scope.injector.get("$mdToast");
+          mdToast.show(
+            mdToast
+              .simple()
+              .theme("error-toast")
+              .textContent(`The name "${result}" is not a valid name.`)
+          );
+          return;
+        }
         spinalFileSystem.newFolder(null, obj, result);
         let username = obj.scope.injector.get("authService").get_user()
           .username;
@@ -86,8 +97,7 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
    */
   action(obj) {
     let mdDialog = obj.scope.injector.get("$mdDialog");
-    let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
-
+    let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
     var confirm = mdDialog
       .prompt()
       .title("New Folder")
@@ -100,11 +110,31 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
       .cancel("Cancel");
     mdDialog.show(confirm).then(
       result => {
-        spinalFileSystem.newFolder(obj.scope.all_dir, obj.node, result);
-        let username = obj.scope.injector.get("authService").get_user()
-          .username;
-        let model = FileSystem._objects[obj.model_server_id];
-        this.log(model[model.length - 1], username, this.description);
+        let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
+        if (regex.test(result)) {
+          let mdToast = obj.scope.injector.get("$mdToast");
+          mdToast.show(
+            mdToast
+              .simple()
+              .theme("error-toast")
+              .textContent(`The name "${result}" is not a valid name.`)
+          );
+          return;
+        }
+
+        const file = window.FileSystem._objects[obj.node.original.fileId];
+        if (!file) return;
+
+        return ngSpinalCore.loadModelPtr(file).then(dir => {
+          if (dir) {
+            dir.force_add_file(result, new Directory(), {
+              model_type: "Directory"
+            });
+            let username = obj.scope.injector.get("authService").get_user()
+              .username;
+            this.log(dir[dir.length - 1], username, this.description);
+          }
+        });
       },
       function() {}
     );

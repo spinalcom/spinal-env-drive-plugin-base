@@ -21,9 +21,6 @@ SpinalDrive_App_Edit.DialogEditCtrl = function(
   $scope,
   $mdDialog,
   model_server_id,
-  spinalModelDictionary,
-  mdDialog,
-  ngSpinalCore
 ) {
   let mod = window.FileSystem._objects[model_server_id];
   $scope.editModel = mod;
@@ -107,9 +104,6 @@ class SpinalDrive_App_Inspector_edit extends SpinalDrive_App_Edit {
         "$scope",
         "$mdDialog",
         "model_server_id",
-        "spinalModelDictionary",
-        "mdDialog",
-        "ngSpinalCore",
         SpinalDrive_App_Edit.DialogEditCtrl
       ],
       template: templateCache.get("SpinalDrive_App_Edit_EditTemplate.html"),

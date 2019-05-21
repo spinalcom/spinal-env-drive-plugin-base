@@ -1,6 +1,9 @@
 const spinalEnvDriveCore = require("spinal-env-drive-core");
 const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
 
+const spinalCore = require("spinal-core-connectorjs");
+const FileSystem = spinalCore._def['FileSystem'];
+
 /**
  * SpinalDrive_App_FileExplorer_rename
  * @extends {SpinalDrive_App}
@@ -21,7 +24,6 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
    */
   action(obj) {
     let mdDialog = obj.scope.injector.get("$mdDialog");
-    let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
     let f = FileSystem._objects[obj.file._server_id];
     var confirm = mdDialog
       .prompt()
@@ -39,6 +41,17 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
     mdDialog.show(confirm).then(
       function(result) {
         if (f.name.get() === result) return;
+        let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
+        if (regex.test(result)) {
+          let mdToast = obj.scope.injector.get("$mdToast");
+          mdToast.show(
+            mdToast
+              .simple()
+              .theme("error-toast")
+              .textContent(`The name "${result}" is not a valid name.`)
+          );
+          return;
+        }
         for (let i = 0; i < obj.scope.curr_dir.length; i++) {
           if (obj.scope.curr_dir[i].name.get() === result) {
             let mdToast = obj.scope.injector.get("$mdToast");
@@ -54,7 +67,7 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
           }
         }
         f.name.set(result);
-        // spinalFileSystem.newFolder(null, obj, result);
+        // .newFolder(null, obj, result);
       },
       function() {}
     );
@@ -84,7 +97,7 @@ module.exports.FileExplorerRename = SpinalDrive_App_FileExplorer_rename;
 //    */
 //   action(obj) {
 //     let mdDialog = obj.scope.injector.get('$mdDialog');
-//     let spinalFileSystem = obj.scope.injector.get('spinalFileSystem');
+//     let  = obj.scope.injector.get('');
 //     console.log(obj);
 //     let f = FileSystem._objects[obj.model_server_id];
 //     var confirm = mdDialog.prompt()
