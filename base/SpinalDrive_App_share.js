@@ -1,5 +1,10 @@
+const spinalCore = require("spinal-core-connectorjs");
 const spinalEnvDriveCore = require("spinal-env-drive-core");
 const SpinalDrive_App = spinalEnvDriveCore.SpinalDrive_App;
+const angular = require("angular");
+
+const FileSystem = spinalCore._def["FileSystem"];
+const Ptr = spinalCore._def["Ptr"];
 
 /**
  * SpinalDrive_App_share
@@ -44,7 +49,7 @@ SpinalDrive_App_share.DialogShareCtrl = function(
       res => {
         create_rightList(res);
       },
-      err => {
+      () => {
         console.error(
           "load_right: couldn't load the right of the model " + model_server_id
         );
@@ -89,21 +94,30 @@ SpinalDrive_App_share.DialogShareCtrl = function(
   $scope.chip_users = [];
   $scope.selectedItem = null;
   $scope.searchText = null;
-  $scope.createFilterFor = query => {
+  function createFilterFor(query) {
     var lowercaseQuery = query.toLowerCase();
 
     return function filterFn(user) {
       return (
-        user._lowername.indexOf(lowercaseQuery) === 0 ||
-        user.id.toString().indexOf(lowercaseQuery) === 0
+        (user._lowername.indexOf(lowercaseQuery) === 0 ||
+          user.id.toString().indexOf(lowercaseQuery) === 0) &&
+        $scope.chip_users.some(c => {
+          return c.id === user.id;
+        }) === false
       );
     };
-  };
+  }
 
   $scope.querySearch = query => {
     var results = query
-      ? $scope.users.filter($scope.createFilterFor(query))
-      : [];
+      ? $scope.users.filter(createFilterFor(query))
+      : $scope.users.filter(user => {
+        return (
+          $scope.chip_users.some(c => {
+            return c.id === user.id;
+          }) === false
+        );
+      });
     return results;
   };
   $scope.cancelDialog = function() {
@@ -121,7 +135,7 @@ SpinalDrive_App_share.DialogShareCtrl = function(
       $scope.error_msgs.push("Add some user(s) to share.");
     }
     if (flag == 0) {
-      $scope.error_msgs.push("Choose the Right access to give.");
+      $scope.error_msgs.push("Please select access rights level.");
     }
     if ($scope.error_msgs.length != 0) {
       return;
@@ -152,7 +166,7 @@ angular.module("app.spinal-panel").run([
         response => {
           $templateCache.put(name, response.data);
         },
-        errorResponse => {
+        () => {
           console.log("Cannot load the file " + uri);
         }
       );
@@ -257,26 +271,26 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
     let spinalModelDictionary = obj.scope.injector.get("spinalModelDictionary");
     let mdDialog = obj.scope.injector.get("$mdDialog");
     let ngSpinalCore = obj.scope.injector.get("ngSpinalCore");
-    let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
+    // let spinalFileSystem = obj.scope.injector.get("spinalFileSystem");
 
-    let node = obj.node;
-    let n_par = spinalFileSystem.folderExplorer_dir[node.original.parent];
-    if (!n_par) {
-      console.error("Error : Can't share your home / root");
-      return;
-    }
-    let n_parent = FileSystem._objects[n_par.model];
-    if (!n_parent) {
-      console.error("Error : Can't share your home / root");
-      return;
-    }
-    let m_node;
-    for (var i = 0; i < n_parent.length; i++) {
-      if (n_parent[i]._ptr.data.value == node.original.model) {
-        m_node = n_parent[i];
-        break;
-      }
-    }
+    // let node = obj.node;
+    // let n_par = spinalFileSystem.folderExplorer_dir[node.original.parent];
+    // if (!n_par) {
+    //   console.error("Error : Can't share your home / root");
+    //   return;
+    // }
+    // let n_parent = FileSystem._objects[n_par.model];
+    // if (!n_parent) {
+    //   console.error("Error : Can't share your home / root");
+    //   return;
+    // }
+    // let m_node;
+    // for (var i = 0; i < n_parent.length; i++) {
+    //   if (n_parent[i]._ptr.data.value == node.original.model) {
+    //     m_node = n_parent[i];
+    //     break;
+    //   }
+    // }
     mdDialog.show({
       controller: [
         "$scope",
@@ -291,12 +305,16 @@ class SpinalDrive_App_FolderExplorer_share extends SpinalDrive_App_share {
       parent: angular.element(document.body),
       clickOutsideToClose: true,
       locals: {
-        model_server_id: m_node._server_id,
+        model_server_id: Number(obj.node.original.fileId),
         spinalModelDictionary: spinalModelDictionary,
         mdDialog: mdDialog,
         ngSpinalCore: ngSpinalCore
       }
     });
+  }
+  is_shown(d) {
+    if (d.parent === "#") return false;
+    return true;
   }
 }
 module.exports.FolderExplorerShare = SpinalDrive_App_FolderExplorer_share;
@@ -360,7 +378,7 @@ class SpinalDrive_App_Inspector_share extends SpinalDrive_App_share {
    * @returns {boolean}
    * @memberof SpinalDrive_App_Inspector_share
    */
-  is_shown(d) {
+  is_shown() {
     return true;
   }
 }
