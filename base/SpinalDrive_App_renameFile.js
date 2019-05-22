@@ -42,7 +42,7 @@ class SpinalDrive_App_FileExplorer_rename extends SpinalDrive_App {
       function(result) {
         if (f.name.get() === result) return;
         let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
-        if (regex.test(result)) {
+        if (regex.test(result) === false) {
           let mdToast = obj.scope.injector.get("$mdToast");
           mdToast.show(
             mdToast

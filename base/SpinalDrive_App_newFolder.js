@@ -45,7 +45,7 @@ class SpinalDrive_App_FileExplorer_currdir_newFolder extends SpinalDrive_App {
     mdDialog.show(confirm).then(
       result => {
         let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
-        if (regex.test(result)) {
+        if (regex.test(result) === false) {
           let mdToast = obj.scope.injector.get("$mdToast");
           mdToast.show(
             mdToast
@@ -111,7 +111,7 @@ class SpinalDrive_App_FolderExplorer_newFolder extends SpinalDrive_App {
     mdDialog.show(confirm).then(
       result => {
         let regex = /^[a-z0-9 ._-]+(\.[a-z0-9_-]+)?$/gim;
-        if (regex.test(result)) {
+        if (regex.test(result) === false) {
           let mdToast = obj.scope.injector.get("$mdToast");
           mdToast.show(
             mdToast
